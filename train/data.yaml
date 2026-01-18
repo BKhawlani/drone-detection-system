@@ -1,0 +1,7 @@
+train: DroneDataset/train/images
+val: DroneDataset/valid/images
+test: DroneDataset/test/images
+
+nc: 2
+names: ['0', '1']
+
