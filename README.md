@@ -1,145 +1,128 @@
-🚁 Real-Time Drone Detection & Physical Alert System (ESP32 + MQTT)
-📌 Project Overview
+# 🚁 Real-Time Drone Detection & Physical Alert System  
+### ESP32 • MQTT • YOLO • Computer Vision
 
-With the rapid increase in the use of drones in civilian and restricted areas, there is a growing need for low-cost, real-time drone detection systems that can operate efficiently and trigger physical alerts when a drone is detected.
+---
 
-This project presents a complete end-to-end drone detection system, starting from dataset collection and model training, all the way to real-time deployment, decision thresholding, and integration with a real physical alarm using ESP32 via MQTT.
+## 📌 Project Overview
+With the increasing use of drones in both civilian and restricted areas, the need for **low-cost, real-time drone detection systems** has become critical.
 
-The ultimate goal of this project is to contribute toward the development of affordable and scalable drone detection solutions, especially for environments with limited resources.
+This project presents a **complete end-to-end drone detection system**, starting from **dataset research and model training**, all the way to **real-time detection**, **confidence thresholding**, and **integration with a real physical alarm using ESP32 via MQTT**.
 
-🔍 1. Dataset Research & Preparation
-📊 Data Collection
+The main objective is to support the development of **affordable and scalable drone detection devices**, especially for environments with limited resources.
 
-Finding high-quality drone datasets was one of the main challenges of this project. The dataset was collected from multiple sources, including:
+---
 
-Public drone image datasets (open-source & research datasets)
+## 🔍 Dataset Research & Preparation
 
-Aerial images containing drones in different:
+### 📊 Data Collection
+Drone images were collected from multiple public and research datasets, covering different:
 
-Altitudes
+- Drone sizes and models  
+- Altitudes and distances  
+- Backgrounds (sky, urban areas, buildings)  
+- Lighting and weather conditions  
 
-Backgrounds (urban, sky, buildings)
+Non-drone images were also included to reduce false positives.
 
-Lighting conditions
+---
 
-Drone sizes and orientations
+### 🏷️ Data Annotation
+- All images were labeled using **bounding boxes**
+- Single class used: `drone`
+- Annotation format compatible with **YOLO (Ultralytics)**
 
-To improve model robustness, non-drone images were also included to reduce false positives.
+---
 
-🏷️ Data Annotation
+### 🔄 Data Preprocessing & Augmentation
+- Image resizing  
+- Brightness & contrast variation  
+- Horizontal flipping  
+- Background complexity variation  
 
-All images were manually or semi-automatically labeled using bounding boxes:
+---
 
-Class: drone
+## 🧠 Model Training
 
-Annotation format compatible with YOLO (Ultralytics)
+### 🤖 Model Architecture
+The system is based on **YOLO (You Only Look Once)** using the **Ultralytics framework**, selected for:
 
-This ensured precise localization and accurate object detection performance.
+- High inference speed  
+- Strong performance on small objects  
+- Real-time detection capability  
 
-🔄 Data Preprocessing & Augmentation
+---
 
-To enhance generalization, several augmentation techniques were applied:
+### 🏋️ Training Process
+- Framework: `Ultralytics YOLO`
+- Input: Annotated drone dataset
+- Output: Bounding boxes with confidence scores
+- Optimization: Localization + classification loss
 
-Image resizing
+---
 
-Brightness and contrast variation
+## 🎯 Real-Time Detection Logic
 
-Horizontal flipping
+### 📸 Frame-by-Frame Inference
+The trained model processes live camera input:
 
-Background complexity variation
+1. Capture video frame  
+2. Run YOLO inference  
+3. Extract bounding boxes & confidence scores  
+4. Draw detection overlays in real-time  
 
-🧠 2. Model Selection & Training
-🤖 Model Architecture
+---
 
-The system uses YOLO (You Only Look Once) via the Ultralytics framework, chosen for:
+### ⚖️ Confidence Threshold
+To minimize false alarms, a confidence threshold is applied:
 
-High inference speed
+```text
+if confidence >= threshold:
+    Drone Detected
+else:
+    Ignore detection
+The threshold was tuned experimentally to balance accuracy and reliability.
+```
+---
+## 🔔 Hardware Integration (ESP32)
+### 🌐 MQTT Communication
+To connect the detection system with real hardware:
 
-Excellent performance on small objects
+Python publishes detection events via MQTT
 
-Real-time deployment capability
+ESP32 subscribes to the alert topic
 
-🏋️ Training Process
+Lightweight and low-latency communication
+---
 
-Framework: Ultralytics YOLO
-
-Input: Annotated drone images
-
-Output: Bounding boxes + confidence scores
-
-Loss optimization: Localization + classification loss
-
-The model was trained until stable convergence was achieved with satisfactory accuracy.
-
-🎯 3. Real-Time Detection & Threshold Logic
-📸 Frame-by-Frame Inference
-
-The trained model is applied directly to live video streams (camera feed):
-
-Capture frame
-
-Run inference
-
-Extract bounding boxes and confidence scores
-
-Draw detection overlays in real-time
-
-⚖️ Confidence Thresholding
-
-To avoid false alarms, a confidence threshold was introduced:
-
-If confidence ≥ threshold → Drone detected
-Else → Ignore detection
-
-
-This threshold was experimentally tuned to balance:
-
-Detection accuracy
-
-False positive reduction
-
-🔔 4. Physical Alert System (ESP32 Integration)
-🌐 Communication via MQTT
-
-To bridge software detection with hardware action, MQTT was used:
-
-Python application → publishes detection events
-
-ESP32 → subscribes to alert topic
-
-This architecture allows:
-
-Low latency
-
-Lightweight communication
-
-Scalability to multiple devices
-
-🔌 ESP32 Alarm System
-
+### 🔌 Physical Alarm System
 When a drone is detected:
 
-Detection event is published via MQTT
+Detection signal is published
 
-ESP32 receives the signal
+ESP32 receives the message
 
-A physical alarm is triggered (buzzer / LED)
+Physical alarm (buzzer / LED) is activated
 
-Alert continues while detection persists
+Alarm remains active while detection continues
 
-This transforms the system from a software-only solution into a real-world operational system.
+---
+## 🧩 System Architecture
 
-🧩 5. System Architecture
-Camera → YOLO Detection → Threshold Check
-            ↓
-        MQTT Publish
-            ↓
-          ESP32
-            ↓
-       Physical Alarm
+Camera
+  ↓
+YOLO Detection
+  ↓
+Confidence Threshold
+  ↓
+MQTT Publish
+  ↓
+ESP32
+  ↓
+Physical Alarm
 
-🛠️ Technologies Used
+---
 
+### 🛠️ Technologies Used
 Python
 
 OpenCV
@@ -152,46 +135,27 @@ MQTT (paho-mqtt)
 
 ESP32
 
-Computer Vision & Real-Time Systems
+---
 
-🎯 Project Objectives
-
-Real-time drone detection
-
-Low-cost hardware integration
-
-Physical alert triggering
-
-Scalable architecture
-
-Practical deployment readiness
-
-🚀 Future Improvements
-
-Multi-class detection (birds vs drones)
-
-Sound-based drone detection fusion
+## 🚀 Future Improvements
+Multi-class detection (drones vs birds)
 
 Edge AI deployment
 
 Multi-camera support
 
-Battery-powered ESP32 modules
+Sensor fusion (audio / radar)
 
-🌍 Vision
+Battery-powered ESP32 module
 
-This project aims to support the development of affordable drone detection devices, making advanced surveillance technology accessible even in low-resource environments.
+---
 
-📌 Demo
 
-📷 Demo GIF available in the repository showing real-time detection and physical alert activation.
+## 👤 Author
+### Bashar Alkhawlani
+### Computer Engineering – AI & Computer Vision
 
-👤 Author
+---
 
-Bashar Alkhawlani
-Computer Engineering
-AI & Computer Vision Enthusiast
-
-⭐ Final Note
-
-If you find this project useful, feel free to ⭐ the repository and contribute.
+### ⭐ Support
+If you find this project useful, please consider giving it a ⭐ on GitHub.
